@@ -1,7 +1,10 @@
 import os
+from dotenv import load_dotenv
 
 
 def getEnvParams() -> dict:
+    load_dotenv()
+
     return {
         "postgres": {
             "database_url": os.getenv("POSTGRES_DATABASE_URL"),
