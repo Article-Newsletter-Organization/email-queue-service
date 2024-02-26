@@ -1,5 +1,4 @@
 from log.custom_logger import CustomLogger
-from errors.unexpected_error import UnexpectedError
 
 
 def main():
