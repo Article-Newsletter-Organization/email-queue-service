@@ -1,22 +1,25 @@
 from abc import ABC
 from datetime import datetime
-import json
 
 
 class CustomError(ABC):
     __time__ = datetime.now().isoformat()
 
-    def __init__(self, message, trace="", name: str = None):
+    def __init__(
+        self, message, traceback="", name: str = None, issues: list[dict | str] = []
+    ):
         self.message = message
-        self.trace = trace
+        self.issues = issues
+        self.traceback = traceback
         self.name = name or self.__class__.__name__
 
     def __dict__(self):
         return {
-            "message": self.message,
-            "trace": self.trace,
-            "name": self.name,
             "timestamp": self.__time__,
+            "message": self.message,
+            "name": self.name,
+            "traceback": self.traceback,
+            "issues": self.issues,
         }
 
     def __json__(self):
