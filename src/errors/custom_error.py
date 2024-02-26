@@ -2,7 +2,7 @@ from abc import ABC
 from datetime import datetime
 
 
-class CustomError(ABC):
+class CustomError(ABC, BaseException):
     __time__ = datetime.now().isoformat()
 
     def __init__(

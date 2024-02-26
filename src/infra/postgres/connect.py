@@ -3,7 +3,7 @@ import psycopg2
 from log.custom_logger import CustomLogger
 from config.env import getEnvParams
 
-from errors.database.connexion_error import ConnexionError
+from errors.database.connection_error import ConnectionError
 
 
 def database_connect():
@@ -17,5 +17,7 @@ def database_connect():
 
         return conn
     except Exception as e:
-        error = ConnexionError(traceback=str(e))
+        error = ConnectionError(traceback=str(e))
         logger.error(error.message, error)
+
+        raise error
