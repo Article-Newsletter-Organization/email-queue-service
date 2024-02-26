@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:latest
+    container_name: email_queue_consumer_postgres
+    hostname: localhost
+    ports:
+      - "${DB_SERVER_PORT:-5432}:5432"
+    environment:
+      POSTGRES_USER: ${DB_USER:-dev}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-strongpassword}
+      POSTGRES_DB: ${DB_DATABASE:-email_queue_consumer}
+    volumes:
+      - email_queue_consumer-service-postgres-data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:latest
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME-changeme}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD-strongpassword}
+    ports:
+      - "${RABBITMQ_PORT-5672}:5672"
+    volumes:
+      - email_queue_consumer-rabbitmq_data:/var/lib/rabbitmq
+
+volumes:
+  email_queue_consumer-service-postgres-data:
+  email_queue_consumer-service-redis-data:
+  email_queue_consumer-rabbitmq_data:
