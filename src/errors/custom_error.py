@@ -6,12 +6,18 @@ class CustomError(ABC, BaseException):
     __time__ = datetime.now().isoformat()
 
     def __init__(
-        self, message, traceback="", name: str = None, issues: list[dict | str] = []
+        self,
+        message,
+        traceback="",
+        name: str = None,
+        issues: list[dict | str] = [],
+        metadata: dict[str, str] = None,
     ):
         self.message = message
         self.issues = issues
         self.traceback = traceback
         self.name = name or self.__class__.__name__
+        self.metadata = metadata
 
     def __dict__(self):
         return {
@@ -20,6 +26,7 @@ class CustomError(ABC, BaseException):
             "name": self.name,
             "traceback": self.traceback,
             "issues": self.issues,
+            "metadata": self.metadata,
         }
 
     def __json__(self):

@@ -1,5 +1,7 @@
 from data.db.database_repository import DatabaseRepository
 from errors.database.database_error import DatabaseError
+from infra.postgres.sqlalchemy_connect import SQLAlchemySession
+from infra.postgres.sqlalchemy_models.subscribers import SubscriberAlchemyModel
 
 
 class SubscriberRepository(DatabaseRepository):
@@ -8,24 +10,20 @@ class SubscriberRepository(DatabaseRepository):
 
     def getSubscribers(self):
         try:
-            query = "SELECT * FROM subscribers WHERE verificate = true"
-            vars = ()
-            self.cursor.execute(query, vars)
-            subscribers = self.cursor.fetchall()
+            self.logger.info("Getting a list of subscribers.")
 
-            self.logger.info(
-                "Subscribers listed successfully.",
-                metadata={"query": query, "vars": vars},
+            session = SQLAlchemySession()
+
+            query = session.query(SubscriberAlchemyModel).filter(
+                SubscriberAlchemyModel.verificate == True
             )
 
-            return subscribers
+            return query.all()
         except Exception as e:
             error = DatabaseError(
                 message="Ocorreu um erro ao tentar tentar listar os inscritos no banco de dados",
                 traceback=str(e),
+                metadata={"query": query.statement},
             )
-            self.logger.error(
-                error.message,
-                error,
-                metadata={"query": query, "vars": vars},
-            )
+
+            raise error

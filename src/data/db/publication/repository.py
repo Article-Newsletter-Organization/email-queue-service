@@ -1,56 +1,54 @@
+from pandas import read_sql_query
 from psycopg2 import DatabaseError
+
 from data.db.database_repository import DatabaseRepository
+from errors.database.database_error import DatabaseError
+from infra.postgres.sqlalchemy_connect import SQLAlchemySession
+from infra.postgres.sqlalchemy_models.publications import PublicationAlchemyModel
 
 
 class PublicationRepository(DatabaseRepository):
+    session = SQLAlchemySession()
+
     def __init__(self):
         super().__init__()
 
     def getPublication(self, id: str):
         try:
-            query = "SELECT * FROM publications WHERE id = %s"
-            vars = id
-            self.cursor.execute(query, vars)
-            publication = self.cursor.fetchone()
+            self.logger.info(f"Trying get the publication with id: {id}.")
 
-            self.logger.info(
-                "Publication finded",
-                metadata={"query": query, "vars": vars},
+            query = self.session.query(PublicationAlchemyModel).filter(
+                PublicationAlchemyModel.id == id
             )
 
-            return publication
+            return query.first()
         except Exception as e:
             error = DatabaseError(
                 message="Ocorreu um erro ao tentar capturar a publicação da mensagem no banco de dados",
                 traceback=str(e),
-            )
-
-            self.logger.error(
-                error.message,
-                error,
-                metadata={"query": query, "vars": vars},
+                metadata={"query": query.statement},
             )
 
             raise error
 
     def updateStatus(self, id: str, status: str):
         try:
-            query = "UPDATE publications SET status = %s WHERE id = %s"
-            vars = (status, id)
-            self.cursor.execute(query, vars)
-            self.conn.commit()
-
-            self.logger.info(
-                "Publication status changed",
-                metadata={"query": query, "vars": vars},
+            publication_query = self.session.query(PublicationAlchemyModel).filter(
+                PublicationAlchemyModel.id == id
             )
+            publication = publication_query.first()
+            publication.status = status
+
+            self.session.commit()
+
         except Exception as e:
+            update_statement = publication_query.statement.compile(
+                compile_kwargs={"literal_binds": True}
+            )
             error = DatabaseError(
                 message="Ocorreu um erro ao tentar capturar a publicação da mensagem no banco de dados",
                 traceback=str(e),
+                metadata={"query": str(update_statement)},
             )
-            self.logger.error(
-                error.message,
-                error,
-                metadata={"query": query, "vars": vars},
-            )
+
+            raise error

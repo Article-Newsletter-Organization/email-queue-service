@@ -1,7 +1,6 @@
 from abc import ABC
-from typing import Any, Mapping
 
-from infra.postgres.connect import database_connect
+from infra.postgres.psycopg2_connect import database_connect
 from log.custom_logger import CustomLogger
 
 
