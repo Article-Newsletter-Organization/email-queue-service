@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:16.2-alpine3.19
     container_name: email_queue_consumer_postgres
     hostname: localhost
     ports:
@@ -14,12 +14,13 @@ services:
       - email_queue_consumer-service-postgres-data:/var/lib/postgresql/data
 
   rabbitmq:
-    image: rabbitmq:latest
+    image: rabbitmq:3.13.1-management-alpine
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME-changeme}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD-strongpassword}
     ports:
       - "${RABBITMQ_PORT-5672}:5672"
+      - 15672:15672
     volumes:
       - email_queue_consumer-rabbitmq_data:/var/lib/rabbitmq
 
