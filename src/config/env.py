@@ -21,7 +21,8 @@ def getEnvParams() -> dict:
             "port": os.getenv("RABBIT_PORT"),
             "username": os.getenv("RABBIT_USERNAME"),
             "password": os.getenv("RABBIT_PASSWORD"),
-            "topic_name": os.getenv("RABBIT_TOPIC_NAME"),
+            "exchange_name": os.getenv("RABBIT_EXCHANGE_NAME"),
+            "queue_name": os.getenv("RABBIT_QUEUE_NAME"),
         },
         "app": {},
     }

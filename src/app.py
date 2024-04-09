@@ -35,7 +35,7 @@ class App:
 
         self._email_list = list(
             map(
-                lambda subscriber: subscriber.name,
+                lambda subscriber: subscriber.email,
                 self.database_service.getSubscribers(),
             )
         )
@@ -45,6 +45,8 @@ class App:
 
     def _emailHandler(self):
         self.logger.info(f"Trying to send {len(self._email_list)} email(s)")
+
+        emailsCount = 0
         for email in self._email_list:
             try:
                 self.email_service.sendEmail(
@@ -52,11 +54,15 @@ class App:
                     self._message_body_target.body,
                     self._message_body_target.subject,
                 )
+                emailsCount += 1
+
             except Exception as e:
                 custom_error = EmailSendError(
                     traceback=str(e), metadata={"email": email}
                 )
                 self.logger.error(custom_error.message, custom_error)
+
+        self.logger.info(f"Emails sent successfully: {emailsCount}")
 
     def _exceptionHandler(self, error: CustomError):
         self.logger.error(error.message, error, metadata=error.metadata)
@@ -65,9 +71,14 @@ class App:
         try:
             self.logger.info("Application running!")
             self._queue_consumer.consume(self._queueCallback)
+            while True:
+                """"""
         except CustomError as error:
             self._exceptionHandler(error)
         except Exception as e:
             custom_error = UnexpectedError(traceback=str(e))
 
             self.logger.error(custom_error.message, custom_error)
+        finally:
+            self.logger.info("Closing application...")
+            self.logger.info("Application closed!")
