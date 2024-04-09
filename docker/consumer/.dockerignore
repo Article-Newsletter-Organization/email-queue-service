@@ -1,0 +1,7 @@
+.venv
+.gitignore
+output.log
+README.md
+example.env
+*.example.*
+docker/

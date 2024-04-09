@@ -1,0 +1,18 @@
+[
+    {
+        "publicationId": "101",
+        "articleId": "A123",
+        "subject": "New Article Published",
+        "body": "Check out our latest article!",
+        "objectUrl": "https://example.com/article/A123",
+        "authorId": "Author1"
+    },
+    {
+        "publicationId": "102",
+        "articleId": "B456",
+        "subject": "Draft Article",
+        "body": "We have a new draft article.",
+        "objectUrl": "https://example.com/article/B456",
+        "authorId": "Author2"
+    }
+]

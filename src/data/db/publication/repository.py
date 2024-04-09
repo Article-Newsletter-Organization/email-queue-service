@@ -1,6 +1,3 @@
-from pandas import read_sql_query
-from psycopg2 import DatabaseError
-
 from data.db.database_repository import DatabaseRepository
 from errors.database.database_error import DatabaseError
 from infra.postgres.sqlalchemy_connect import SQLAlchemySession
