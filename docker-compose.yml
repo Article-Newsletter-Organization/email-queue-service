@@ -1,8 +1,9 @@
 version: "3.9"
+
+name: email-consumer-service
 services:
-  postgres:
+  db:
     image: postgres:16.2-alpine3.19
-    container_name: email_queue_consumer_postgres
     ports:
       - "${DB_SERVER_PORT:-5432}:5432"
     environment:
@@ -14,7 +15,6 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.13.1-management-alpine
-    container_name: email_queue_consumer_rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME-changeme}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD-strongpassword}
@@ -25,17 +25,17 @@ services:
       - email_queue_consumer-rabbitmq_data:/var/lib/rabbitmq
 
   consumer-1:
-    build: 
+    container_name: email-consumer-service-consumer-1
+    build:
       context: .
       dockerfile: docker/consumer/Dockerfile
-    container_name: email_consumer-1
     image: email_queue_consumer:latest
 
   consumer-2:
-    build: 
+    container_name: email-consumer-service-consumer-2
+    build:
       context: .
       dockerfile: docker/consumer/Dockerfile
-    container_name: email_consumer-2
     image: email_queue_consumer:latest
 
 volumes:
